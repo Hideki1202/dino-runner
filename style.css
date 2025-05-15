@@ -1,0 +1,62 @@
+body {
+    margin: 0;
+    background-color: #f4f4f4;
+    overflow: hidden;
+  }
+  
+  .game {
+    width: 100%;
+    height: 200px;
+    border-bottom: 2px solid #000;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  #dino {
+    width: 40px;
+    height: 40px;
+    background: gray;
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+  }
+  
+  #cactus {
+    width: 20px;
+    height: 40px;
+    background: green;
+    position: absolute;
+    bottom: 0;
+    left: 100%;
+  }
+  
+  @keyframes cactusMove {
+    0% { left: 100%; }
+    100% { left: -20px; }
+  }
+  
+  .jump {
+    animation: jump 0.5s;
+  }
+  
+  @keyframes jump {
+    0% { bottom: 0px; }
+    50% { bottom: 110px; }
+    100% { bottom: 0px; }
+  }
+  
+  .obstacle {
+    width: 20px;
+    height: 40px;
+    background: green;
+    position: absolute;
+    bottom: 0;
+    left: 100%;
+  }
+  
+  #score {
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    padding: 10px;
+  }
+  
