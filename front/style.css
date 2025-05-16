@@ -36,7 +36,7 @@ body {
   }
   
   .jump {
-    animation: jump 0.5s;
+    animation: jump 0.8s;
   }
   
   @keyframes jump {
