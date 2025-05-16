@@ -4,11 +4,6 @@ Este projeto é uma API desenvolvida com Flask e conectada a um banco de dados D
 </br></br></br>
 ## 📦 Requisitos
 
-Instale as dependências com:
-```bash
-pip install -r requirements.txt
-```
-
 Lista de dependências (`requirements.txt`):
 ```
 comm==0.2.2
