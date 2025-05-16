@@ -32,7 +32,6 @@ function verificarLoginCache() {
         window.location.href = "login.html";
       } else {
         console.log("Usuário autenticado com sucesso:", data);
-        // opcional: atualizar dados salvos no localStorage
         localStorage.setItem("usuario", JSON.stringify(data));
       }
     })
@@ -70,7 +69,6 @@ function createObstacle() {
   const now = Date.now();
   const timeSinceLast = now - lastObstacleTime;
 
-  // Tempo mínimo de 1.2 segundos entre obstáculos
   if (timeSinceLast < 1200) {
     const waitTime = 1200 - timeSinceLast;
     setTimeout(createObstacle, waitTime);

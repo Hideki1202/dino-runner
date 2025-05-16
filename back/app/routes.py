@@ -95,7 +95,7 @@ def login():
         }
     }), 200
 
-@main.route("/usuarios/ordenar-record", methods=["GET"])
-def ordenar_usuarios_por_record():
-    usuarios = Usuario.query.order_by(Usuario.record.desc()).all()
+@main.route("/usuarios/ordenar-record/<int:limite>", methods=["GET"])
+def ordenar_usuarios_por_record(limite):
+    usuarios = Usuario.query.order_by(Usuario.record.desc()).limit(limite).all()
     return jsonify([{"id": u.id, "nome": u.nome, "email": u.email, "record": u.record} for u in usuarios])
