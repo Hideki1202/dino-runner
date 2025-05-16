@@ -4,8 +4,44 @@ const dino = document.getElementById("dino");
 let isJumping = false;
 let isGameOver = false;
 let score = 0;
+let api = "http://localhost:5000";
 const scoreDisplay = document.getElementById("score");
 
+verificarLoginCache();
+
+function verificarLoginCache() {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+  
+    if (!usuario) {
+      window.location.href = "login.html";
+      return;
+    }
+  
+    fetch(`${api}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        senha: usuario.senha,
+        email: usuario.email
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.erro) {
+        localStorage.removeItem("usuario");
+        window.location.href = "login.html";
+      } else {
+        console.log("Usuário autenticado com sucesso:", data);
+        // opcional: atualizar dados salvos no localStorage
+        localStorage.setItem("usuario", JSON.stringify(data));
+      }
+    })
+    .catch(() => {
+      alert("Erro ao verificar login");
+      window.location.href = "login.html";
+    });
+  }
+  
 document.addEventListener("keydown", () => {
   if (isGameOver) {
     restartGame();
@@ -95,5 +131,67 @@ function restartGame() {
   document.querySelectorAll(".obstacle").forEach(o => o.remove());
   createObstacle();
 }
+
+function criarUsuario() {
+    fetch(`${api}/usuarios`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: document.getElementById("nome").value,
+        email: document.getElementById("email").value,
+        idade: document.getElementById("idade").value
+      })
+    })
+    .then(r => r.json())
+    .then(d => alert("Usuário criado: " + JSON.stringify(d)));
+  }
+
+  function fazerLogin( email, senha ) {
+    fetch(`${api}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: document.getElementById("loginNome").value,
+        email: email
+      })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.erro) {
+        alert("Usuário não encontrado");
+      } else {
+        alert("Login OK: " + JSON.stringify(d));
+      }
+    });
+  }
+
+  function atualizarRecorde() {
+    const id = document.getElementById("userId").value;
+    const recorde = document.getElementById("novoRecorde").value;
+
+    fetch(`${api}/usuarios/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ recorde: parseInt(recorde) })
+    })
+    .then(r => r.json())
+
+  }
+
+  function listarUsuarios() {
+    fetch(`${api}/usuarios`)
+      .then(r => r.json())
+      .then(data => {
+        return data
+      });
+  }
+
+  function verRanking() {
+    fetch(`${api}/usuarios/ordenar-record`)
+      .then(r => r.json())
+      .then(data => {
+        return data
+      });
+  }
 
 createObstacle();
