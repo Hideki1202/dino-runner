@@ -127,20 +127,20 @@ function gameOver() {
   console.log(score)
 
   const usuario = JSON.parse(localStorage.getItem("usuario"));
-  console.log("Recorde atual:", usuario.usuario.record);
-  if (Number( score) >= Number( usuario.usuario.record)) {
-    usuario.usuario.record = score;
+  console.log("Recorde atual:", usuario.record);
+  if (Number( score) >= Number( usuario.record)) {
+    usuario.record = score;
     localStorage.setItem("usuario", JSON.stringify(usuario));
     console.log("Novo recorde:", score);
     recordDisplay.innerHTML = "Recorde: " + score;
-    fetch(`${api}/usuarios/${usuario.usuario.id}`, {
+    fetch(`${api}/usuarios/${usuario.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
-        id: usuario.usuario.id,
-        nome: usuario.usuario.nome,
-        email: usuario.usuario.email,
-        senha: usuario.usuario.senha,
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        senha: usuario.senha,
         record: score })
     })
     .then(r => r.json())
@@ -156,13 +156,15 @@ function gameOver() {
     alert(`Game Over! Sua pontuação: ${score}. Pressione qualquer tecla para recomeçar.`);
   }
 
-  score = 0;
+  
 }
 
 function restartGame() {
   isGameOver = false;
   document.querySelectorAll(".obstacle").forEach(o => o.remove());
   createObstacle();
+  score = 0;
+  scoreDisplay.textContent = "Pontuação: " + score;
 }
 
 function criarUsuario() {
