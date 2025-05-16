@@ -1,7 +1,7 @@
 # Projeto DinoRunner - Flask API
 
 Este projeto é uma API desenvolvida com Flask e conectada a um banco de dados DockerNet. O ambiente é configurado com suporte a CORS, variáveis de ambiente e debug remoto.
-</br>
+</br></br>
 ## 📦 Requisitos
 
 Instale as dependências com:
@@ -20,7 +20,7 @@ Flask-SQLAlchemy==3.1.1
 psycopg2-binary==2.9.10
 python-dotenv==1.1.0
 ```
-</br>
+</br></br>
 ## 🚀 Como rodar o projeto
 
 1. Clone o repositório e sincronize com a branch `main`:
