@@ -2,6 +2,7 @@
 
 Este projeto é uma API desenvolvida com Flask e conectada a um banco de dados DockerNet. O ambiente é configurado com suporte a CORS, variáveis de ambiente e debug remoto.
 </br></br></br>
+
 ## 📦 Requisitos
 
 Lista de dependências (`requirements.txt`):
@@ -16,6 +17,7 @@ psycopg2-binary==2.9.10
 python-dotenv==1.1.0
 ```
 </br></br>
+
 ## 🚀 Como rodar o projeto
 
 1. Clone o repositório e sincronize com a branch `main`:
@@ -45,6 +47,7 @@ SECRET_KEY=sua_chave_secreta
 ```bash
 python app.py
 ```
+</br></br>
 
 ## 💻 Como rodar o frontend (estático)
 
