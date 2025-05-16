@@ -6,12 +6,14 @@ let isGameOver = false;
 let score = 0;
 let api = "http://localhost:5000";
 const scoreDisplay = document.getElementById("score");
+const recordDisplay = document.getElementById("record");
 
 verificarLoginCache();
 
 function verificarLoginCache() {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
-  
+    console.log("aadsd")
+    console.log(usuario)
     if (!usuario) {
       window.location.href = "login.html";
       return;
@@ -32,7 +34,9 @@ function verificarLoginCache() {
         window.location.href = "login.html";
       } else {
         console.log("Usuário autenticado com sucesso:", data);
-        localStorage.setItem("usuario", JSON.stringify(data));
+        localStorage.setItem("usuario", JSON.stringify(data.usuario));
+        recordDisplay.innerHTML = "Recorde: " + usuario.record;
+
       }
     })
     .catch(() => {
@@ -58,7 +62,7 @@ function jump() {
   setTimeout(() => {
     dino.classList.remove("jump");
     isJumping = false;
-  }, 500);
+  }, 800);
 }
 
 let lastObstacleTime = 0;
@@ -128,7 +132,7 @@ function gameOver() {
     usuario.usuario.record = score;
     localStorage.setItem("usuario", JSON.stringify(usuario));
     console.log("Novo recorde:", score);
-
+    recordDisplay.innerHTML = "Recorde: " + score;
     fetch(`${api}/usuarios/${usuario.usuario.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
