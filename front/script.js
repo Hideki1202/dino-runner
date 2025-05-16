@@ -102,6 +102,7 @@ function createObstacle() {
       dinoBottom < 30
     ) {
       clearInterval(obstacleInterval);
+      console.log(score)
       gameOver();
     }
 
@@ -115,15 +116,45 @@ function createObstacle() {
       
   }, 20);
 
-  // Gera o próximo obstáculo com um tempo aleatório adicional
-  const nextTime = Math.random() * 1500 + 1000; // entre 1s e 2.5s
+  const nextTime = Math.random() * 1500 + 1000;
   setTimeout(createObstacle, nextTime);
 }
 
 function gameOver() {
   isGameOver = true;
+  console.log(score)
+
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  console.log("Recorde atual:", usuario.usuario.record);
+  if (Number( score) >= Number( usuario.usuario.record)) {
+    usuario.usuario.record = score;
+    localStorage.setItem("usuario", JSON.stringify(usuario));
+    console.log("Novo recorde:", score);
+
+    fetch(`${api}/usuarios/${usuario.usuario.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        id: usuario.usuario.id,
+        nome: usuario.usuario.nome,
+        email: usuario.usuario.email,
+        senha: usuario.usuario.senha,
+        record: score })
+    })
+    .then(r => r.json())
+    .then(data => {
+      console.log("Recorde atualizado no backend:", data);
+      alert(`Novo recorde! ${score} pontos. Pressione qualquer tecla para recomeçar.`);
+    })
+    .catch(err => {
+      console.error("Erro ao atualizar recorde:", err);
+      alert("Erro ao salvar novo recorde. Pressione qualquer tecla para recomeçar.");
+    });
+  } else {
+    alert(`Game Over! Sua pontuação: ${score}. Pressione qualquer tecla para recomeçar.`);
+  }
+
   score = 0;
-  alert("Game Over! Pressione qualquer tecla para recomeçar.");
 }
 
 function restartGame() {
