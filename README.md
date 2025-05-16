@@ -1,6 +1,7 @@
-# Projeto Backend - Flask API
+# Projeto Dino-Runner - Flask API
 
-Este projeto é uma API desenvolvida com Flask e conectada a um banco de dados PostgreSQL. O ambiente é configurado com suporte a CORS, variáveis de ambiente e debug remoto.
+Este projeto é uma API desenvolvida com Flask e conectada a um banco de dados DockerNet. O ambiente é configurado com suporte a CORS, variáveis de ambiente e debug remoto.
+
 
 ## 📦 Requisitos
 
@@ -20,6 +21,7 @@ Flask-SQLAlchemy==3.1.1
 psycopg2-binary==2.9.10
 python-dotenv==1.1.0
 ```
+
 
 ## 🚀 Como rodar o projeto
 
