@@ -45,3 +45,21 @@ SECRET_KEY=sua_chave_secreta
 ```bash
 python app.py
 ```
+
+## 💻 Como rodar o frontend (estático)
+
+1. Acesse a pasta do frontend:
+```bash
+cd front
+```
+
+2. Inicie um servidor local com Python:
+```bash
+python -m http.server 5500
+```
+
+3. Acesse no navegador:
+```bash
+http://localhost:5500
+```
+
