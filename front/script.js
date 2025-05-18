@@ -2,10 +2,18 @@ const game = document.querySelector(".game-container");
 const dino = document.getElementById("avatar");
 
 let avatar = localStorage.getItem("avatarSelecionado");
+let avatarPulando = localStorage.getItem("avatarPulando");
+let avatarAndando = avatar.replace(".png", "Andando.png");         // avatarAndando.png
+
 let avatarWidth = parseInt(localStorage.getItem('avatarWidth'));
 let avatarHeight = parseInt(localStorage.getItem('avatarHeight'));
+let avatarPulandoWidth = parseInt(localStorage.getItem('avatarPulandoWidth'));
+let avatarPulandoHeight = parseInt(localStorage.getItem('avatarPulandoHeight'));
+console.log(avatarPulandoHeight)
+console.log(avatarPulandoWidth)
 
 if (avatar) {
+  console.log(avatar)
   dino.style.backgroundImage = `url('${avatar}')`;
 
   if (avatarWidth && avatarHeight) {
@@ -23,11 +31,34 @@ let isJumping = false;
 let isGameOver = false;
 let score = 0;
 let record = parseInt(localStorage.getItem("record")) || 0;
-
+let andandoInterval = null;
 const scoreDisplay = document.getElementById("score");
 const recordDisplay = document.getElementById("record");
 recordDisplay.textContent = "Recorde: " + record;
+function iniciarAnimacaoAndando() {
+  if(!isJumping){
+    dino.style.width = avatarWidth + "px";
+    dino.style.height = avatarHeight + "px";
+    if (andandoInterval) return;
+  
+    let usandoSpriteNormal = true;
+  
+    andandoInterval = setInterval(() => {
+      dino.style.backgroundImage = usandoSpriteNormal
+        ? `url('${avatarAndando}')`
+        : `url('${avatar}')`;
+  
+      usandoSpriteNormal = !usandoSpriteNormal;
+    }, 200); 
+  }
 
+}
+
+function pararAnimacaoAndando() {
+  clearInterval(andandoInterval);
+  andandoInterval = null;
+  dino.style.backgroundImage = `url('${avatar}')`;
+}
 document.addEventListener("keydown", (e) => {
   const popupAtivo = document.getElementById("popup").classList.contains("active");
   const nomeInputFocused = document.activeElement === document.getElementById("nomeInput");
@@ -44,12 +75,24 @@ document.addEventListener("keydown", (e) => {
 });
 
 function jump() {
+  pararAnimacaoAndando()
   isJumping = true;
   dino.classList.add("jump");
+  dino.style.height = avatarPulandoHeight + "px";
+  dino.style.width = avatarPulandoWidth +  "px";
+  dino.style.backgroundImage = `url('${avatarPulando}')`;
+
   setTimeout(() => {
     dino.classList.remove("jump");
+    dino.style.height = avatarHeight +"px";
+    dino.style.width = avatarWidth +"px";
+    dino.style.backgroundImage = `url('${avatar}')`;
     isJumping = false;
-  }, 800);
+    iniciarAnimacaoAndando();
+
+
+
+  }, 1000);
 }
 
 let lastIndex = -1;
@@ -145,7 +188,7 @@ function gameOver() {
     localStorage.setItem("record", record);
     recordDisplay.textContent = "Recorde: " + record;
   }
-
+  pararAnimacaoAndando()
   document.getElementById("popup").classList.add("active");
 }
 
@@ -156,6 +199,8 @@ function restartGame() {
   scoreDisplay.textContent = "Pontuação: " + score;
   lastIndex = -1;
   createObstacle();
+  iniciarAnimacaoAndando(); 
+
 }
 
 function enviarRecorde() {

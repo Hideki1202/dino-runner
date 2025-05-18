@@ -129,7 +129,15 @@
             { nome: "Manussauro", img: "../images/dino.png", width: 210, height: 150 },
             { nome: "Carlatido", img: "../images/cachorro.png", width: 150, height: 175 },
             { nome: "Pandamilla", img: "../images/panda.png", width: 140, height: 160 },
-            { nome: "Perrugido", img: "../images/leao.png", width: 220, height: 160 }
+            { nome: "Perrugido", img: "../images/leao.png", width: 230, height: 160 }
+        ];
+        const avataresPulando = [
+            { nome: "Hidexugo", img: "../images/texugoPulando.png", width: 180, height: 140 },
+            { nome: "Yasfox", img: "../images/raposaPulando.png", width: 171, height: 95 },
+            { nome: "Manussauro", img: "../images/dinoPulando.png", width: 210, height: 150 },
+            { nome: "Carlatido", img: "../images/cachorroPulando.png", width: 150, height: 175 },
+            { nome: "Pandamilla", img: "../images/pandaPulando.png", width: 140, height: 160 },
+            { nome: "Perrugido", img: "../images/leaoPulando.png", width: 230, height: 160 }
         ];
 
         let indiceAtual = 0;
@@ -152,8 +160,12 @@
 
         function confirmarAvatar() {
             localStorage.setItem('avatarSelecionado', avatares[indiceAtual].img);
+            localStorage.setItem('avatarPulando', avataresPulando[indiceAtual].img);
+            localStorage.setItem('avatarPulandoWidth', avataresPulando[indiceAtual].width);
+            localStorage.setItem('avatarPulandoHeight', avataresPulando[indiceAtual].height);
             localStorage.setItem('avatarWidth', avatares[indiceAtual].width);
             localStorage.setItem('avatarHeight', avatares[indiceAtual].height);
+
             window.location.href = 'jogo.html';
         }
 
