@@ -116,10 +116,11 @@ function createObstacle() {
     obstacle.style.left = obstacleLeft + "px";
 
     const dinoBottom = parseInt(getComputedStyle(dino).bottom);
+
     if (
-      obstacleLeft > 50 &&
-      obstacleLeft < 90 &&
-      dinoBottom < (sel.height - 30)
+      obstacleLeft > 60 &&
+      obstacleLeft < 100 &&
+      dinoBottom < 150
     ) {
       clearInterval(interval);
       gameOver();
@@ -164,12 +165,12 @@ function enviarRecorde() {
     return;
   }
 
-  fetch("http://localhost:5000/usuarios/criar", {
-    method: "POST",
+  fetch("http://localhost:5000/usuarios/game/"+nome, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ nome, record: score })
+    body: JSON.stringify({ record: score })
   })
   .then(response => {
     if (!response.ok) throw new Error("Erro ao enviar recorde");
@@ -180,12 +181,13 @@ function enviarRecorde() {
     document.getElementById("popup").classList.remove("active");
     document.getElementById("nomeInput").value = "";
     restartGame();
+    window.location.href = 'inicio.html';
+
   })
   .catch(error => {
     alert("Erro ao enviar recorde: " + error.message);
   });
 
-  window.location.href = 'inicio.html';
 }
 
 createObstacle();
