@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Ranking</title>
+    <style>
+        body {
+            background-image: url('../images/background.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        .ranking-container {
+            width: 40%;
+            padding: 40px;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: black;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        ul {
+            margin: 5% 0;
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        li {
+            font-size: 22px;
+            color: black;
+            padding: 10px 0;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+        }
+
+        button {
+            margin: 5% 0 3%;
+            background-color: black;
+            border: none;
+            color: white;
+            padding: 20px 32px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="ranking-container">
+        <h1>Ranking dos Jogadores</h1>
+        <div id="mensagem-vazio" class="vazio" style="display: none;">Sem histórico de jogos</div>
+        <ul id="lista-ranking"></ul>
+        <button onclick="window.location.href='inicio.html'">Voltar ao Início</button>
+    </div>
+</body>
+</html>

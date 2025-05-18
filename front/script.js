@@ -1,59 +1,46 @@
-const game = document.querySelector(".game");
-const dino = document.getElementById("dino");
+const game = document.querySelector(".game-container");
+const dino = document.getElementById("avatar");
+
+let avatar = localStorage.getItem("avatarSelecionado");
+let avatarWidth = parseInt(localStorage.getItem('avatarWidth'));
+let avatarHeight = parseInt(localStorage.getItem('avatarHeight'));
+
+if (avatar) {
+  dino.style.backgroundImage = `url('${avatar}')`;
+
+  if (avatarWidth && avatarHeight) {
+    dino.style.width = avatarWidth + "px";
+    dino.style.height = avatarHeight + "px";
+  } else {
+    dino.style.width = "150px";
+    dino.style.height = "150px";
+  }
+} else {
+  console.warn("Nenhum avatar carregado.");
+}
 
 let isJumping = false;
 let isGameOver = false;
 let score = 0;
-let api = "http://localhost:5000";
+let record = parseInt(localStorage.getItem("record")) || 0;
+
 const scoreDisplay = document.getElementById("score");
 const recordDisplay = document.getElementById("record");
+recordDisplay.textContent = "Recorde: " + record;
 
-verificarLoginCache();
+document.addEventListener("keydown", (e) => {
+  const popupAtivo = document.getElementById("popup").classList.contains("active");
+  const nomeInputFocused = document.activeElement === document.getElementById("nomeInput");
 
-function verificarLoginCache() {
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    console.log("aadsd")
-    console.log(usuario)
-    if (!usuario) {
-      window.location.href = "login.html";
-      return;
-    }
-  
-    fetch(`${api}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        senha: usuario.senha,
-        email: usuario.email
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.erro) {
-        localStorage.removeItem("usuario");
-        window.location.href = "login.html";
-      } else {
-        console.log("Usuário autenticado com sucesso:", data);
-        localStorage.setItem("usuario", JSON.stringify(data.usuario));
-        recordDisplay.innerHTML = "Recorde: " + usuario.record;
-
-      }
-    })
-    .catch(() => {
-      alert("Erro ao verificar login");
-      window.location.href = "login.html";
-    });
+  if (popupAtivo && nomeInputFocused) {
+    return;
   }
-  
-document.addEventListener("keydown", () => {
+
   if (isGameOver) {
     restartGame();
     return;
   }
-
-  if (!isJumping) {
-    jump();
-  }
+  if (!isJumping) jump();
 });
 
 function jump() {
@@ -65,57 +52,84 @@ function jump() {
   }, 800);
 }
 
+let lastIndex = -1;
+
+const imagensObstaculos = [
+  { imagem: "../images/pedra1.png", width: 70, height: 70, tipo: "pedra" },
+  { imagem: "../images/pedra2.png", width: 55, height: 60, tipo: "pedra" },
+  { imagem: "../images/arbusto.png", width: 120, height: 70, tipo: "arbusto" },
+  { imagem: "../images/tronco.png", width: 130, height: 65, tipo: "tronco" }
+];
+
 let lastObstacleTime = 0;
 
 function createObstacle() {
   if (isGameOver) return;
 
   const now = Date.now();
-  const timeSinceLast = now - lastObstacleTime;
-
-  if (timeSinceLast < 1200) {
-    const waitTime = 1200 - timeSinceLast;
-    setTimeout(createObstacle, waitTime);
+  const delta = now - lastObstacleTime;
+  if (delta < 1200) {
+    setTimeout(createObstacle, 1200 - delta);
     return;
   }
-
   lastObstacleTime = now;
 
   const obstacle = document.createElement("div");
   obstacle.classList.add("obstacle");
+
+  let idx;
+  let tentativas = 0;
+  do {
+    idx = Math.floor(Math.random() * imagensObstaculos.length);
+    tentativas++;
+  } while (
+    lastIndex >= 0 &&
+    (
+      imagensObstaculos[lastIndex].tipo === imagensObstaculos[idx].tipo ||
+      (
+        (imagensObstaculos[lastIndex].tipo === "arbusto" && imagensObstaculos[idx].tipo === "tronco") ||
+        (imagensObstaculos[lastIndex].tipo === "tronco" && imagensObstaculos[idx].tipo === "arbusto")
+      )
+    ) &&
+    tentativas < 10
+  );
+  lastIndex = idx;
+
+  const sel = imagensObstaculos[idx];
+  obstacle.style.backgroundImage = `url('${sel.imagem}')`;
+  obstacle.style.backgroundSize = "contain";
+  obstacle.style.backgroundRepeat = "no-repeat";
+  obstacle.style.backgroundPosition = "center";
+  obstacle.style.width = `${sel.width}px`;
+  obstacle.style.height = `${sel.height}px`;
+
   game.appendChild(obstacle);
 
   let obstacleLeft = game.offsetWidth;
-  let obstacleInterval = setInterval(() => {
+  const interval = setInterval(() => {
     if (isGameOver) {
-      clearInterval(obstacleInterval);
+      clearInterval(interval);
       obstacle.remove();
       return;
     }
-
     obstacleLeft -= 5;
     obstacle.style.left = obstacleLeft + "px";
 
-    const dinoBottom = parseInt(getComputedStyle(dino).getPropertyValue("bottom"));
-
+    const dinoBottom = parseInt(getComputedStyle(dino).bottom);
     if (
       obstacleLeft > 50 &&
       obstacleLeft < 90 &&
-      dinoBottom < 30
+      dinoBottom < (sel.height - 30)
     ) {
-      clearInterval(obstacleInterval);
-      console.log(score)
+      clearInterval(interval);
       gameOver();
     }
-
-    if (obstacleLeft < -30) {
-        clearInterval(obstacleInterval);
-        obstacle.remove();
-      
-        score++;
-        scoreDisplay.textContent = "Pontuação: " + score;
-      }
-      
+    if (obstacleLeft < -sel.width) {
+      clearInterval(interval);
+      obstacle.remove();
+      score++;
+      scoreDisplay.textContent = "Pontuação: " + score;
+    }
   }, 20);
 
   const nextTime = Math.random() * 1500 + 1000;
@@ -124,109 +138,54 @@ function createObstacle() {
 
 function gameOver() {
   isGameOver = true;
-  console.log(score)
 
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
-  console.log("Recorde atual:", usuario.record);
-  if (Number( score) >= Number( usuario.record)) {
-    usuario.record = score;
-    localStorage.setItem("usuario", JSON.stringify(usuario));
-    console.log("Novo recorde:", score);
-    recordDisplay.innerHTML = "Recorde: " + score;
-    fetch(`${api}/usuarios/${usuario.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        senha: usuario.senha,
-        record: score })
-    })
-    .then(r => r.json())
-    .then(data => {
-      console.log("Recorde atualizado no backend:", data);
-      alert(`Novo recorde! ${score} pontos. Pressione qualquer tecla para recomeçar.`);
-    })
-    .catch(err => {
-      console.error("Erro ao atualizar recorde:", err);
-      alert("Erro ao salvar novo recorde. Pressione qualquer tecla para recomeçar.");
-    });
-  } else {
-    alert(`Game Over! Sua pontuação: ${score}. Pressione qualquer tecla para recomeçar.`);
+  if (score > record) {
+    record = score;
+    localStorage.setItem("record", record);
+    recordDisplay.textContent = "Recorde: " + record;
   }
 
-  
+  document.getElementById("popup").classList.add("active");
 }
 
 function restartGame() {
   isGameOver = false;
   document.querySelectorAll(".obstacle").forEach(o => o.remove());
-  createObstacle();
   score = 0;
   scoreDisplay.textContent = "Pontuação: " + score;
+  lastIndex = -1;
+  createObstacle();
 }
 
-function criarUsuario() {
-    fetch(`${api}/usuarios`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nome: document.getElementById("nome").value,
-        email: document.getElementById("email").value,
-        idade: document.getElementById("idade").value
-      })
-    })
-    .then(r => r.json())
-    .then(d => alert("Usuário criado: " + JSON.stringify(d)));
+function enviarRecorde() {
+  const nome = document.getElementById("nomeInput").value.trim();
+  if (!nome) {
+    alert("Por favor, digite um nome.");
+    return;
   }
 
-  function fazerLogin( email, senha ) {
-    fetch(`${api}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nome: document.getElementById("loginNome").value,
-        email: email
-      })
-    })
-    .then(r => r.json())
-    .then(d => {
-      if (d.erro) {
-        alert("Usuário não encontrado");
-      } else {
-        alert("Login OK: " + JSON.stringify(d));
-      }
-    });
-  }
+  fetch("http://localhost:5000/usuarios/criar", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ nome, record: score })
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Erro ao enviar recorde");
+    return response.json();
+  })
+  .then(data => {
+    console.log("Recorde enviado:", data);
+    document.getElementById("popup").classList.remove("active");
+    document.getElementById("nomeInput").value = "";
+    restartGame();
+  })
+  .catch(error => {
+    alert("Erro ao enviar recorde: " + error.message);
+  });
 
-  function atualizarRecorde() {
-    const id = document.getElementById("userId").value;
-    const recorde = document.getElementById("novoRecorde").value;
-
-    fetch(`${api}/usuarios/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recorde: parseInt(recorde) })
-    })
-    .then(r => r.json())
-
-  }
-
-  function listarUsuarios() {
-    fetch(`${api}/usuarios`)
-      .then(r => r.json())
-      .then(data => {
-        return data
-      });
-  }
-
-  function verRanking() {
-    fetch(`${api}/usuarios/ordenar-record`)
-      .then(r => r.json())
-      .then(data => {
-        return data
-      });
-  }
+  window.location.href = 'inicio.html';
+}
 
 createObstacle();
